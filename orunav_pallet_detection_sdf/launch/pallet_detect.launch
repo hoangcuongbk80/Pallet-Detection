@@ -1,0 +1,76 @@
+<launch>
+  <group ns="robot4">
+    <param name="tf_prefix" value="robot4" />
+
+    <!-- ==================== SDF Based Start ==================== -->
+    
+    <node pkg="orunav_pallet_detection_sdf" type="euro_pallet_sdf_node" name="euro_pallet_sdf_node" output="screen">
+      <param name="robot_id_" value="4"/>
+      <remap from="pointcloud" to ="/camera/depth_registered/points"/> 
+      <param name="depth_frame_id" value="camera_depth_frame" />
+
+      <param name="background_indices_file_name" value="/home/hoang/.ros/background.dat"/>
+      <param name="Dmax" value="0.4"/>
+      <param name="visualize" value="true"/>
+      <param name="visualize_sdf" value="true"/>
+      <param name="removeFloor" value="true"/>
+      <param name="sensor_time_offset" value="0.0"/>
+      <param name="residual_thresh" value="0.01"/>
+      <param name="cov_thresh" value="0.2"/>
+      <param name="only_compute_filter_used" value="true"/>
+      <param name="asus_camera" value="true" />
+      <param name="min_nb_matched_points" value="10000" />
+      <param name="min_match_nb_points_ratio" value="0.1" />
+      <param name="floor_distance_thresh" value="0.02"/>
+    
+    <!-- ==================== SDF Based Finish ==================== -->
+
+
+    <!-- =================== OBBICP Based Start =================== -->
+      <param name="OBBICP_based_" value="true"/>
+      <param name="using_bagfile" value="true"/>
+
+      <remap from="pointcloud" to ="/camera/depth/points"/>
+      <remap from="depthmap" to ="/camera/depth/image"/>
+      
+      <param name="ground_depthmap_dir" value="/home/hoang/UK-Demo/ground_depth.png"/>
+      <param name="models_dir" value="/home/hoang/UK-Demo/"/>
+
+      <param name="downsample" value="true"/>
+      <param name="downsample_ratio" value="0.02"/>
+
+      <!-- For pclEuclideanDistanceSegmentation -->
+      <param name="EC_segThresh" value="0.05"/>
+      <param name="maxSegPoints" value="9900000"/>
+      <param name="minSegPoints" value="100"/>
+
+      <!-- For obbDimensionalCheck -->
+      <param name="tolerance_X" value="0.2"/>
+      <param name="tolerance_Y" value="0.2"/>
+      <param name="tolerance_Z" value="0.5"/>
+
+      <!-- Coarse to Fine Registration -->
+      <param name="ICP_based" value="true"/>
+      <param name="overlap_dst_thresh" value="0.05"/>
+      <param name="overlap_score_thresh" value="0.8"/>
+
+      <!-- Deep Learning -->
+      <param name="deepLearning_based" value="false"/>
+
+      <param name="save_ground_depthmap" value="false"/>
+      <param name="background_thresh" value="0.1"/>
+
+      <param name="visual_model" value="true"/>
+
+      <!-- =================== OBBICP Based Finish =================== -->
+
+    </node>
+  </group>
+   
+   <!-- Only work for online camera -->
+  <!-- <node pkg="tf" type="static_transform_publisher" name="robotX_ASUS_4" args="0.699344 -0.044987 0.838105 -0.320109 0.0113935 0.947305 0.00385003 /world /camera_link 10"/>
+  <node pkg="tf" type="static_transform_publisher" name="world_robot4" args="0 0 0 0 0 0 /world /robot4/base_link 10"/>
+   -->
+  <!-- <node name="rviz" pkg="rviz" type="rviz" args="-d $(find orunav_pallet_detection_sdf)/launch/pallet_detect.rviz"/>
+ -->
+</launch>
